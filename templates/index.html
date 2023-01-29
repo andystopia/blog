@@ -2,7 +2,12 @@
 
 {% block content %}
 <h1 class="title">
-  This is my blog made with Zola.
+  Andy's Blog
 </h1>
-<p>Click <a href="{{ get_url(path='@/cs/_index.md') }}">here</a> to see my posts.</p>
+<p>
+    <h2>Blogs</h2>
+    <ul>
+        <li><a href="{{ get_url(path='@/cs/_index.md') }}" class="no-decor fg-black">CS Ramblings on CS Topics</a></li>
+    </ul>
+</p>
 {% endblock content %}
