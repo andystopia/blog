@@ -1,15 +1,18 @@
-{% extends "toc-base.html" %}
-{% block content %}
+{% extends "toc-base.html" %} {% block content %}
 <h1 class="title">{{ section.title }}</h1>
-<div class="author"> Andy Day </div>
+<div class="author">Andy Day</div>
 <ul class="toc">
     <!-- If you are using pagination, section.pages will be empty. You need to use the paginator object -->
     {% for page in section.pages %}
     <li class="table-of-contents">
         <a href="{{ page.permalink | safe }}">
-            <em>{{ page.title }}</em> <span class="toc-date">{{page.date}}</span>
+            <em>{{ page.title }}</em>
+            <span class="toc-date">{{page.date}}</span>
         </a>
     </li>
-    {% endfor %}
+    {% endfor %} 
+
+
 </ul>
+<div class="main-blog-link"><a href="{{ get_url(path='@/')}}">Main Blog</a></div>
 {% endblock content %}

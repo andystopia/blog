@@ -1,6 +1,7 @@
 <style>
     :root { 
         --hash-color: rgb(185, 185, 185);
+        --dark-color: #1e1e27;
     }
 
     html { 
@@ -9,7 +10,7 @@
     }
 
     body { 
-        background: #1e2534;
+        background: var(--dark-color);
         padding: 0;
         margin: 0;
         overflow-x: hidden;
@@ -58,6 +59,7 @@
         margin-bottom: 1em;
     }
     h2 {
+        margin-top: 1.2em;
         margin-bottom: 0;
         font-weight: 500;
     }
@@ -118,7 +120,21 @@
         text-indent: 0;
     }
     p {
-        text-indent: 4ex;
+        text-indent: 3ex;
+        margin: 8pt 0;
+    }
+
+    ul.toc {
+        text-indent: 0;
+        padding: 0;
+    }
+
+    .main-blog-link { 
+        margin-top: 2em;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .container {
         background: white;
@@ -138,7 +154,7 @@
         left: 2px;
         top: 0;
         width: 100%;
-        background: #1e2534;
+        background: var(--dark-color);
         position: sticky;
         padding: 5px;
     }
@@ -147,10 +163,6 @@
         color: white;
         font-weight: bold;
         font-family: cursive;
-    }
-
-    ul { 
-        padding: 0;
     }
 
     nav > a:hover { 
@@ -165,7 +177,23 @@
         color: black;
     }
 
-    
+
+    pre { 
+        overflow-x: scroll;
+    }
+    p  { 
+        margin: 13x 0;
+    }
+    p > code { 
+        background: #f3f3f3;
+        padding: 0 0.5ex;
+        border-radius: 0.5ex;
+    }
+    pre { 
+        padding: 0.5em;
+        border-radius: 10px;
+        tab-size: 5ex;
+    }
     @media print { 
         html, body { 
             background: white;
