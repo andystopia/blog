@@ -159,6 +159,7 @@ Note that in this case, we can clearly see that the player doesn't require a spe
 
 Hopefully at this point, it is clear how we could swap out other implementations for inventory. 
 
+Note that this subsection's description is often referred to as the `Strategy` pattern. 
 
 ## Peer to Peer Driven Communication
 
@@ -166,6 +167,24 @@ The ability for one object to reflect the state of another object, such as a hot
 
 As of right now, I would probably just have a hotbar component that receives an `[SerializeField] private Inventory inventory` instance and calls it's public methods directly, but if you know a good way to decouple these behaviors without using an external package, please PR!
 
+Update: 2023-2-2
+
+While I haven't tried this, given a little more thought about this use case, perhaps something like the [Model View Controller](https://developer.mozilla.org/en-US/docs/Glossary/MVC) would be most sufficient. 
+
+![](https://developer.mozilla.org/en-US/docs/Glossary/MVC/model-view-controller-light-blue.png)
+
+This is a well established pattern, so perhaps we can think about how we can apply it to Unity. Let's think about an Inventory reflected in a "hotbar" kind of scenario. The "inventory" is the Model in the model view controller. 
+
+Let's think of the design for the hotbar. There could be a hotbar game object, which shows the user the hotbar, in model view controller this would be our `View`. An instance attached like `InventoryHotbarViewUI` is a possible name for one of the hotbar components. Then something like `InventoryHotbarViewController` could be attached to the original element and this could communicate to the `Inventory` (Model) through the same pattern as "Same Object Communication". The view accepts the controller directly, in that way, the components are tightly coupled, but I think that for most cases the view *is* intrinsically tied to the controller. However it makes sense that the controller shouldn't be intrinsically linked to the inventory (but should rather talk to it through the Strategy pattern as outlined in the "Same Object Communication" section).  The interface that the `Inventory` talks to the controllers through should capture the behavior of the inventory with the most lax type bounds possible. 
+
+For the full inventory edit menu (like something that takes up the whole screen), a similar treatment is applied. A View is applied to an external element and a controller is added as a component to the `Inventory` game object. Use the unity editor to supply the field on the view which takes the `Controller` instance by type directly. 
+
+Note it is *crucial* that the inventory supplies objects by reference, not by value through it's implementing interface, so that the child components can just re-render that on every frame. This is slightly inefficient, but the alternative would be to wire up some "peer-to-peer" messaging that tells the objects when to poll for new value types. A large part benefit of this pattern comes from the fact that the inventory is the one source of truth, it and it alone manages the state, so there's nothing to sync up between game objects.
+
+
+The benefits of this pattern, though slightly more boilerplate, is that it's possible to change implementations for the Inventory, *but* not break the views or editing logic of dependents. It is also possible to swap out multiple ways to work with the inventory without having to modify the inventory itself. 
+
+Of course the downside is that we need to hand roll a new controller every time, but I have a feeling this pattern doesn't come up so often that it is a killer.
 
 ## Multiple-Producer, Multiple-Consumer Communication
 
