@@ -31,14 +31,19 @@ Certain uses of specialization allows for more consistent method calls when mult
 
 ### Plotting
 
-Julia has bindings to many plotting libraries, including an official one, Plots.jl. Plots.jl is not as fully featured as plotting libraries from other languages such as Plotly or ggplot, and I would argue that matplotlib also has more features. *That said*, the best description I can give for Plots.jl is that it feels like what matplotlib should have been. It just writes more concisely, the spacing works out rather well, and the theming appears reasonable by default. Julia also has bindings for plotly.
+Julia has bindings to many plotting libraries, including an official one, Plots.jl. Plots.jl is not as fully featured as plotting libraries from other languages such as Plotly or ggplot, and I would argue that matplotlib also has more features. *That said*, the best description I can give for Plots.jl is that it feels like what matplotlib should have been. It just writes more concisely, the spacing works out rather well, and the theming appears reasonable by default. Julia also has bindings for plotly. However, that said, Pluto.jl (which I'll describe in detail later) does not support plotly and therefore is mostly limited (due to the ecosystem) to using the in built Julia Plots.jl library which is not as mature or featured as plotly.
 
 ## Where Julia Falls Short
 
 ### Maturity
 Julia feels immature. I understand that it's a young language, and I will say the language documentation as well as many popular documentation is excellent, unified, and easy to navigate. 
 
+#### Tooling
 However, there are some major caveats. The Julia IDE support feels quite limited. Features such as function extraction, variable extraction, and inlining all were shaky, even when using the Julia recommended editor (VSCode) and extension.  I never had them produce anything *wrong*, just failed to activate in situations where they definitely could have been utilized. 
+
+#### Packages
+
+A lot of the Julia packages are very fragmented, often it will be necessary to install multiple libraries (which Pluto luckily makes easy, every notebook is its own package manager). However, it's still slightly tedious to have to install a dataframes package as well as a csv package to read in said dataframe. In general it's much less ergnomic to write in this way. Also, package imports need to be compiled by your computer for your machine the first time they're included in a project, and the Julia compiler is quite slow so it does slow down the workflow quite a bit while the packages are installing.
 
 ### Jupyter support.
 
