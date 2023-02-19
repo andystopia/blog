@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    
+<title>
+    A Pattern for Accelerating Solving of Differential Equations using Numba
+</title>
+
+    <style>
+    :root {
+        --hash-color: rgb(185, 185, 185);
+        --dark-color: #1e1e27;
+    }
+
+    html {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    body {
+        background: var(--dark-color);
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+    }
+    .container {
+        font-family: Georgia, "Times New Roman", Times, serif;
+        box-sizing: border-box;
+    }
+    .table-of-contents {
+        list-style-type: none;
+    }
+
+    .table-of-contents > a {
+        display: flex;
+        background: #f3f3f3;
+        padding: 12pt;
+        border-radius: 5px;
+
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+        margin-bottom: 12pt;
+    }
+
+    .table-of-contents > a:hover {
+        text-decoration: underline;
+    }
+    .toc-date {
+        font-size: 10pt;
+        color: rgb(96, 96, 96);
+    }
+    .toc {
+        margin-top: 4em;
+    }
+    .table-of-contents > a {
+        color: black;
+        text-decoration: none;
+        font-size: 1.25em;
+    }
+    .author {
+        display: block;
+        font-size: 1.15em;
+        margin-top: 0.5em;
+        text-align: center;
+    }
+    .main-content {
+        line-height: 1.2em;
+    }
+    .section {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+    h2 {
+        margin-top: 1.2em;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 500;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    h3 {
+        font-size: 1.15em;
+    }
+
+    h3::before {
+        content: "###";
+        margin-right: 0.5em;
+        color: var(--hash-color);
+        font-size: 14pt;
+    }
+
+    h4::before {
+        content: "####";
+        margin-right: 0.5em;
+        color: var(--hash-color);
+        font-size: 14pt;
+    }
+    img {
+        max-width: 100%;
+    }
+    h2::before {
+        content: "##";
+        color: var(--hash-color);
+        margin-right: 0.5em;
+        font-size: 14pt;
+    }
+    h1 {
+        display: block;
+        text-align: center;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
+    .subtitle {
+        display: block;
+        text-align: center;
+        color: grey;
+        margin: 0;
+        font-weight: 200;
+        margin-top: 2px;
+    }
+    .no-indent {
+        text-indent: 0;
+    }
+    p {
+        text-indent: 3ex;
+        margin: 8pt 0;
+    }
+
+    ul.toc {
+        text-indent: 0;
+        padding: 0;
+    }
+
+    .main-blog-link {
+        margin-top: 2em;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container {
+        background: white;
+        padding: 4em 2em;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 750px;
+        margin-top: 50px;
+        box-shadow: 0 0 15px black;
+        box-sizing: border-box;
+    }
+
+    nav {
+        display: flex;
+        height: 1.5em;
+        justify-content: center;
+        align-items: center;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: var(--dark-color);
+        position: fixed;
+        padding: 5px;
+    }
+    nav > a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-family: cursive;
+    }
+
+    nav > a:hover {
+        text-decoration: underline;
+    }
+
+    .no-decor {
+        text-decoration: none;
+    }
+
+    .fg-black {
+        color: black;
+    }
+
+    pre {
+        overflow-x: scroll;
+    }
+    p {
+        margin: 13x 0;
+    }
+    p > code {
+        background: #f3f3f3;
+        padding: 0 0.5ex;
+        border-radius: 0.5ex;
+    }
+    pre {
+        padding: 0.5em;
+        border-radius: 10px;
+        tab-size: 5ex;
+    }
+    @media print {
+        html,
+        body {
+            background: white;
+        }
+        .container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+        nav {
+            display: none;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+    <nav>
+        <a href="https://andystopia.github.io/blog/cs/">Home</a>
+    </nav>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title no-indent">
+  A Pattern for Accelerating Solving of Differential Equations using Numba
+</h1>
+<p class="author no-indent">
+    Andy Day
+</p>
+<p class="subtitle no-indent">
+    2023-02-19
+</p>
+<div class="main-content">
+<h2 id="background">Background</h2>
+<p>It makes sense that for a sufficiently fast equation solver, and a sufficiently complex system, that the time it takes to solve the system can be accelerated by optimizing the code for the system itself. For this, a library like <a href="https://numba.pydata.org/">numba</a> which compiles python code using LLVM with some optimizations makes sense.</p>
+<h2 id="numba-how-to-make-python-go-faster">Numba: How to Make Python Go Faster</h2>
+<p>Python interpreter implementations often compile their code into python bytecode which is then run on the interpreter. However, in my experience, the bytecode is very unoptimized (loops being slow is one prime example). In contrast, Numba takes the python function and compiles it JIT using LLVM (the codegen backend for Clang, Rust, Julia, and many more).</p>
+<p>Numba tends to achieve the highest speed to simplicity ratio when using only a limited set of types (PODs and numpy ndarrays). Code that uses more complex types can make using numba more difficult. Luckily, the common patterns for differential equation solving seem to make translating code to code that works with numba relatively easy. </p>
+<h3 id="common-pattern">Common Pattern</h3>
+<pre data-lang="python" style="background-color:#fafafa;color:#383a42;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#a626a4;">def </span><span style="color:#0184bc;">diffeq</span><span>(</span><span style="color:#e45649;">t</span><span>, </span><span style="color:#e45649;">Y</span><span>, </span><span style="color:#e45649;">params</span><span>):
+</span><span>	</span><span style="color:#a0a1a7;"># code here
+</span><span>	</span><span style="color:#a626a4;">pass
+</span></code></pre>
+<p>When params is a python object, numba tends to use &quot;object-mode&quot;, which is not preferable. But..., since python classes are very close type-wise to a dictionary, as are method kwargs, a simple idea is to have this method (using a python class) but have it defer to a different method, using only simple python types and numpy matricies, which can be compiled optimally.</p>
+<h3 id="replacement-pattern">Replacement Pattern</h3>
+<pre data-lang="python" style="background-color:#fafafa;color:#383a42;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#a626a4;">from </span><span>numba </span><span style="color:#a626a4;">import </span><span>jit
+</span><span>
+</span><span>
+</span><span>@</span><span style="color:#e45649;">jit</span><span>(</span><span style="color:#e45649;">nopython</span><span style="color:#a626a4;">=</span><span style="color:#c18401;">True</span><span>) </span><span style="color:#a0a1a7;"># &lt;--- all that&#39;s needed for the magic!
+</span><span style="color:#a626a4;">def </span><span style="color:#0184bc;">diffeq_numba</span><span>(</span><span style="color:#e45649;">t</span><span>, </span><span style="color:#e45649;">y</span><span>, </span><span style="color:#e45649;">N</span><span>, </span><span style="color:#e45649;">matA</span><span>, </span><span style="color:#e45649;">matB</span><span>):
+</span><span>	</span><span style="color:#a626a4;">pass
+</span><span style="color:#a626a4;">def </span><span style="color:#0184bc;">diffeq</span><span>(</span><span style="color:#e45649;">t</span><span>, </span><span style="color:#e45649;">y</span><span>, </span><span style="color:#e45649;">params</span><span>):
+</span><span>	</span><span style="color:#a626a4;">return </span><span style="color:#e45649;">diffeq_numba</span><span>(t, y, params.matA, params.matB)
+</span></code></pre>
+<p>Note that the <code>jit</code> annotation has the <code>nopython</code> attribute, which means to assert that the code will build without excess python machinery. Despite the simplicity, this pattern has yielded <em>massive</em> performance gains for the differential equation system that I've tested. Reducing the time to run from 12+ seconds to around 3 seconds (not a rigorous benchmark). It would be best to not have to incur the overhead of calling the other method, but that is an undertaking where the benefits only make sense in certain use cases.</p>
+<h2 id="caveats">Caveats</h2>
+<p>Numba JIT errors are verbose and rather unhelpful. Perhaps I'm just not used to them, but they feel out of date. I had a conflict with numpy as well, which required me to regress a minor version back, which is not a big deal, just slightly annoying. Its errors also, for reasons I don't know, don't have access to the source text when running in a notebook, which is annoying because it just spits out errors with no associated source code.</p>
+<h2 id="other-benefits">Other Benefits</h2>
+<p>Numba has additional annotations for releasing the GIL, truly parallel loops, and multithreading, utilizing all the cores on the machine. Of course, Python's multithreading story is not very strong, but with proper care some subset of multithreaded programs are implementable. With  multithreading and optimizations, solving systems can be greatly accelerated. For more information on parallelism, see the <code>prange</code> function in the <a href="https://numba.readthedocs.io/en/stable/user/parallel.html">numba parallelism section</a>.</p>
+<h2 id="supplements">Supplements</h2>
+<p>Environment: Jupyter-lab.</p>
+<p>I use <a href="https://python-poetry.org/">poetry</a> (highly recommend), for venv and dependencies. Here are my dependencies and versions:</p>
+<pre data-lang="toml" style="background-color:#fafafa;color:#383a42;" class="language-toml "><code class="language-toml" data-lang="toml"><span style="color:#e45649;">python </span><span>= </span><span style="color:#50a14f;">&quot;3.9.1&quot;
+</span><span style="color:#e45649;">matplotlib </span><span>= </span><span style="color:#50a14f;">&quot;^3.7.0&quot;
+</span><span style="color:#e45649;">numpy </span><span>= </span><span style="color:#50a14f;">&quot;^1.23&quot;
+</span><span style="color:#e45649;">jupyterlab </span><span>= </span><span style="color:#50a14f;">&quot;^3.6.1&quot;
+</span><span style="color:#e45649;">scipy </span><span>= </span><span style="color:#50a14f;">&quot;^1.10.0&quot;
+</span><span style="color:#e45649;">pandas </span><span>= </span><span style="color:#50a14f;">&quot;^1.5.3&quot;
+</span><span style="color:#e45649;">numba </span><span>= </span><span style="color:#50a14f;">&quot;^0.56.4&quot;
+</span></code></pre>
+
+</div>
+
+    </div>
+  </section>
+  
+</body>
+
+</html>
