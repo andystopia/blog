@@ -1,6 +1,6 @@
 +++
 title = "A Pattern for Accelerating Solving of Differential Equations using Numba"
-date = 2023-01-28
+date = 2023-02-19
 [extra]
 author = "Andy Day"
 +++
