@@ -1,15 +1,16 @@
 <style>
-    :root { 
+    :root {
         --hash-color: rgb(185, 185, 185);
         --dark-color: #1e1e27;
     }
 
-    html { 
+    html {
         margin: 0;
         padding: 0;
+        overflow-x: hidden;
     }
 
-    body { 
+    body {
         background: var(--dark-color);
         padding: 0;
         margin: 0;
@@ -17,30 +18,36 @@
     }
     .container {
         font-family: Georgia, "Times New Roman", Times, serif;
+        box-sizing: border-box;
     }
-    .table-of-contents { 
+    .table-of-contents {
         list-style-type: none;
     }
 
-
     .table-of-contents > a {
         display: flex;
-        padding: 0;
-        justify-content: space-between;
+        background: #f3f3f3;
+        padding: 12pt;
+        border-radius: 5px;
+
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
         align-items: center;
-    }   
+        margin-bottom: 12pt;
+    }
 
     .table-of-contents > a:hover {
         text-decoration: underline;
-    }   
-    .toc-date { 
+    }
+    .toc-date {
         font-size: 10pt;
         color: rgb(96, 96, 96);
     }
     .toc {
         margin-top: 4em;
     }
-    .table-of-contents > a { 
+    .table-of-contents > a {
         color: black;
         text-decoration: none;
         font-size: 1.25em;
@@ -51,7 +58,7 @@
         margin-top: 0.5em;
         text-align: center;
     }
-    .main-content { 
+    .main-content {
         line-height: 1.2em;
     }
     .section {
@@ -72,11 +79,11 @@
         font-weight: 500;
     }
 
-    h2 { 
+    h2 {
         font-size: 1.3em;
     }
 
-    h3 { 
+    h3 {
         font-size: 1.15em;
     }
 
@@ -129,7 +136,7 @@
         padding: 0;
     }
 
-    .main-blog-link { 
+    .main-blog-link {
         margin-top: 2em;
         width: 100%;
         display: flex;
@@ -138,24 +145,25 @@
     }
     .container {
         background: white;
-        padding: 4em min(6vw, 3em);
+        padding: 4em 2em;
         margin-left: auto;
         margin-right: auto;
         max-width: 750px;
+        margin-top: 50px;
         box-shadow: 0 0 15px black;
         box-sizing: border-box;
     }
 
-    nav { 
+    nav {
         display: flex;
         height: 1.5em;
-        justify-content:center;
+        justify-content: center;
         align-items: center;
-        left: 2px;
+        left: 0;
         top: 0;
         width: 100%;
         background: var(--dark-color);
-        position: sticky;
+        position: fixed;
         padding: 5px;
     }
     nav > a {
@@ -165,44 +173,47 @@
         font-family: cursive;
     }
 
-    nav > a:hover { 
+    nav > a:hover {
         text-decoration: underline;
     }
 
-    .no-decor { 
+    .no-decor {
         text-decoration: none;
     }
 
-    .fg-black { 
+    .fg-black {
         color: black;
     }
 
-
-    pre { 
+    pre {
         overflow-x: scroll;
     }
-    p  { 
+    p {
         margin: 13x 0;
     }
-    p > code { 
+    p > code {
         background: #f3f3f3;
         padding: 0 0.5ex;
         border-radius: 0.5ex;
     }
-    pre { 
+    pre {
         padding: 0.5em;
         border-radius: 10px;
         tab-size: 5ex;
     }
-    @media print { 
-        html, body { 
+    @media print {
+        html,
+        body {
             background: white;
         }
-        .container { 
+        .container {
             width: 100%;
             margin: 0;
             padding: 0;
             box-shadow: none;
+        }
+        nav {
+            display: none;
         }
     }
 </style>
