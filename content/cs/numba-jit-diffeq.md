@@ -23,7 +23,7 @@ def diffeq(t, Y, params):
 	pass
 ```
 
-When params is a python object, numba tends to use "object-mode", which is not preferable. But..., since python classes are very close type-wise to a dictionary, a simple idea is to have this method (using a python class) but have it defer to a different method, using only simple python types and numpy matricies, which can be compiled optimally.
+When params is a python object, numba tends to use "object-mode", which is not preferable. But..., since python classes are very close type-wise to a dictionary, as are method kwargs, a simple idea is to have this method (using a python class) but have it defer to a different method, using only simple python types and numpy matricies, which can be compiled optimally.
 
 ### Replacement Pattern
 ```python
